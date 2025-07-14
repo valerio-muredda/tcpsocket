@@ -1,0 +1,25 @@
+# 02-buildconfig.yaml
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: websocket-webapp
+  namespace: <YOUR_PROJECT_NAME>
+spec:
+  output:
+    to:
+      kind: ImageStreamTag
+      name: websocket-webapp:latest
+  source:
+    type: Git
+    git:
+      uri: <YOUR_GIT_REPO_URL>
+      ref: <YOUR_GIT_BRANCH> # e.g., main
+    contextDir: <YOUR_CONTEXT_DIRECTORY> # e.g., /websocket-app
+  strategy:
+    type: Docker
+    dockerStrategy:
+      dockerfilePath: Dockerfile # If Dockerfile is not in the contextDir root
+  triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChange: {}

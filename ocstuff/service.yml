@@ -1,0 +1,17 @@
+# 03-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: websocket-webapp-service
+  namespace: <YOUR_PROJECT_NAME>
+  labels:
+    app: websocket-webapp
+spec:
+  selector:
+    app: websocket-webapp
+  ports:
+    - protocol: TCP
+      port: 5000 # The port your Flask app listens on inside the container
+      targetPort: 5000
+      name: http-websocket # Name the port for clarity
+  type: ClusterIP # Internal service

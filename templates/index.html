@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Echo App</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        #messages {
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            height: 250px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            text-align: left;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+        #messageInput {
+            width: calc(100% - 80px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin-right: 10px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .status-message {
+            font-style: italic;
+            color: #666;
+        }
+        .user-message {
+            color: #007bff;
+            font-weight: bold;
+        }
+        .server-message {
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>WebSocket Echo App</h1>
+        <div id="messages"></div>
+        <input type="text" id="messageInput" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        const messagesDiv = document.getElementById('messages');
+        const messageInput = document.getElementById('messageInput');
+        let socket;
+
+        function appendMessage(text, type = 'status-message') {
+            const p = document.createElement('p');
+            p.className = type;
+            p.textContent = text;
+            messagesDiv.appendChild(p);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to bottom
+        }
+
+        function connectWebSocket() {
+            // Determine the WebSocket URL based on the current host
+            // Socket.IO client automatically handles the '/socket.io/' path
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const hostname = window.location.hostname;
+            const port = window.location.port ? `:${window.location.port}` : '';
+            const wsUrl = `${protocol}//${hostname}${port}`;
+
+            appendMessage(`Attempting to connect to WebSocket at: ${wsUrl}`);
+            socket = io(wsUrl);
+
+            socket.on('connect', () => {
+                appendMessage('WebSocket Connected!', 'status-message');
+            });
+
+            socket.on('disconnect', () => {
+                appendMessage('WebSocket Disconnected!', 'status-message');
+            });
+
+            socket.on('message', (data) => {
+                appendMessage(`Server: ${data.data}`, 'server-message');
+            });
+
+            socket.on('connect_error', (error) => {
+                appendMessage(`Connection Error: ${error.message}`, 'status-message');
+                console.error('Socket.IO Connection Error:', error);
+            });
+
+            socket.on('error', (error) => {
+                appendMessage(`Error: ${error.message}`, 'status-message');
+                console.error('Socket.IO Error:', error);
+            });
+        }
+
+        function sendMessage() {
+            const message = messageInput.value;
+            if (message.trim() !== '') {
+                socket.emit('message', message);
+                appendMessage(`You: ${message}`, 'user-message');
+                messageInput.value = '';
+            }
+        }
+
+        // Connect when the page loads
+        window.onload = connectWebSocket;
+
+        // Send message on Enter key press
+        messageInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+# 05-route.yaml
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: websocket-webapp-route
+  namespace: <YOUR_PROJECT_NAME>
+  labels:
+    app: websocket-webapp
+spec:
+  to:
+    kind: Service
+    name: websocket-webapp-service
+  port:
+    targetPort: http-websocket # Refers to the named port in the Service
+  tls:
+    termination: edge # OpenShift handles TLS termination
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None

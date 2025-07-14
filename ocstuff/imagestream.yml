@@ -1,0 +1,7 @@
+# 01-imagestream.yaml
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: websocket-webapp
+  namespace: <YOUR_PROJECT_NAME>
+spec: {}

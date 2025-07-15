@@ -3,7 +3,7 @@ apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   name: websocket-webapp-route
-  namespace: <YOUR_PROJECT_NAME>
+  namespace: test
   labels:
     app: websocket-webapp
 spec:

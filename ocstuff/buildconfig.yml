@@ -3,7 +3,7 @@ apiVersion: build.openshift.io/v1
 kind: BuildConfig
 metadata:
   name: websocket-webapp
-  namespace: <YOUR_PROJECT_NAME>
+  namespace: test
 spec:
   output:
     to:
@@ -12,8 +12,8 @@ spec:
   source:
     type: Git
     git:
-      uri: <YOUR_GIT_REPO_URL>
-      ref: <YOUR_GIT_BRANCH> # e.g., main
+      uri: https://github.com/valerio-muredda/tcpsocket.git
+      ref: main # e.g., main
     contextDir: <YOUR_CONTEXT_DIRECTORY> # e.g., /websocket-app
   strategy:
     type: Docker

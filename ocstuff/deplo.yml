@@ -3,7 +3,7 @@ apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
 metadata:
   name: websocket-webapp
-  namespace: <YOUR_PROJECT_NAME>
+  namespace: test
   labels:
     app: websocket-webapp
 spec:
@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: websocket-webapp
-          image: image-registry.openshift-image-registry.svc:5000/<YOUR_PROJECT_NAME>/websocket-webapp:latest
+          image: image-registry.openshift-image-registry.svc:5000/test/websocket-webapp:latest
           ports:
             - containerPort: 5000
               protocol: TCP
@@ -56,4 +56,4 @@ spec:
         from:
           kind: ImageStreamTag
           name: websocket-webapp:latest
-          namespace: <YOUR_PROJECT_NAME>
+          namespace: test

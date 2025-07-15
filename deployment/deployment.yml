@@ -1,0 +1,59 @@
+# 04-deploymentconfig.yaml
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: websocket-webapp
+  namespace: test
+  labels:
+    app: websocket-webapp
+spec:
+  replicas: 1
+  selector:
+    app: websocket-webapp
+  template:
+    metadata:
+      labels:
+        app: websocket-webapp
+    spec:
+      containers:
+        - name: websocket-webapp
+          image: image-registry.openshift-image-registry.svc:5000/test/websocket-webapp:latest
+          ports:
+            - containerPort: 5000
+              protocol: TCP
+          env:
+            - name: SECRET_KEY
+              value: "your_strong_secret_key_here" # IMPORTANT: Change this for production!
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          # Liveness and Readiness probes for the webapp itself
+          # These check the HTTP endpoint, not the WebSocket directly,
+          # but ensure the Flask app is responding.
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 3
+      restartPolicy: Always
+  triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChange:
+        from:
+          kind: ImageStreamTag
+          name: websocket-webapp:latest
+          namespace: test

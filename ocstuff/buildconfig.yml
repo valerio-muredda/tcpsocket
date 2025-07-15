@@ -14,7 +14,7 @@ spec:
     git:
       uri: https://github.com/valerio-muredda/tcpsocket.git
       ref: main # e.g., main
-    contextDir: <YOUR_CONTEXT_DIRECTORY> # e.g., /websocket-app
+    #contextDir: <YOUR_CONTEXT_DIRECTORY> # e.g., /websocket-app
   strategy:
     type: Docker
     dockerStrategy:
